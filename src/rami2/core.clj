@@ -28,12 +28,12 @@
         (let [sp (.split (.substring content 1) " ")
               command (first sp)
               args (rest sp)
-              storage @(:storage @state)]
-          (case command "aka" (reset! (:storage @state) (storage/set-aka storage args))
-                        "print" (m/create-message! (:messaging @state) channel-id :content (format "Filename: %s\nContents: %s" (:filename storage) (:data storage)))
-                        "exist" (m/create-message! (:messaging @state) channel-id :content (format "AKA %s: %s" (first args) (str (storage/is-aka storage (first args)))))
-                        (if (storage/is-aka storage command)
-                          (m/create-message! (:messaging @state) channel-id :content (storage/get-aka storage command)))))))))
+              storage (:storage @state)]
+          (case command "aka" (reset! storage (storage/set-aka @storage args))
+                        "print" (m/create-message! (:messaging @state) channel-id :content (format "Filename: %s\nContents: %s" (:filename @storage) (:data @storage)))
+                        "exist" (m/create-message! (:messaging @state) channel-id :content (format "AKA %s: %s" (first args) (str (storage/is-aka @storage (first args)))))
+                        (if (storage/is-aka @storage command)
+                          (m/create-message! (:messaging @state) channel-id :content (storage/get-aka @storage command)))))))))
 
 (defn -main
   "I don't do a whole lot ... yet."
