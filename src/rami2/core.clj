@@ -46,13 +46,8 @@
         init-state {:connection connection-ch
                     :event event-ch
                     :messaging messaging-ch
-                    :storage (atom (storage/open-storage "storage.edn"))}]
+                    :storage (atom (storage/open-storage (:storage config)))}]
       (reset! state init-state)
       (e/message-pump! event-ch handle-event)
       (m/stop-connection! messaging-ch)
       (c/disconnect-bot! connection-ch)))
-
-(defn test-storage
-  []
-  (let [s (storage/open-storage "storage.edn")]
-    (println (:data s))))
