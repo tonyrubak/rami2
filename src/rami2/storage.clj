@@ -1,14 +1,20 @@
 (ns rami2.storage)
 
-(defprotocol Storage
-    (open-storage   [file] "Returns a Storage service from the given file")
-    (write-storage  [file] "Writes the in-memory Storage service to the file")
-    (get-aka        [aka] "Returns the text associated with an AKA")
-    (set-aka        [aka] "Creates or updates an AKA")
-    (delete-aka     [aka] "Removes an AKA"))
-
-(open-storage [file]
+(defn open-storage
+    [file]
     (with-open [r (java.io.PushbackReader. (clojure.java.io/reader file))]
-        (clojure.edn/read r))))
-(write-storage [file storage]
-    (spit file (with-out-str (pr storage))))
+        {:data (clojure.edn/read r) :filename file}))
+(defn write-storage
+    [storage]
+    (spit (:filename storage) (with-out-str (pr (:data storage)))))
+(defn set-aka
+    [storage aka]
+    (let [storage {:filename (:filename storage) :data (assoc (:data storage) (keyword (first aka)) (first (rest aka)))}]
+        (write-storage storage)
+        storage))
+(defn is-aka
+    [storage aka]
+    (contains? (:data storage) (keyword aka)))
+(defn get-aka
+    [storage aka]
+    (get (:data storage) (keyword aka)))
