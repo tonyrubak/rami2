@@ -20,9 +20,9 @@
   (if (= content "!disconnect")
     (a/put! (:connection @state) [:disconnect])
     (when-not bot
-      (if (.contains content "eddie")
+      (if (.contains (.toLowerCase content) "eddie")
         (m/create-message! (:messaging @state) channel-id :embed { :image {:url "https://cdn.discordapp.com/attachments/173094635391025152/691489861739216906/691114417013915740.png"}}))
-      (if (.contains content "bullshit")
+      (if (.contains (.toLowerCase content) "bullshit")
         (m/create-message! (:messaging @state) channel-id :embed { :image {:url "https://cdn.discordapp.com/attachments/610695135738593282/710590989437501450/blazing.gif"}}))
       (if (.startsWith content ".")
         (let [sp (.split (.substring content 1) " ")
