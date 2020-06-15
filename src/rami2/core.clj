@@ -15,7 +15,7 @@
     event-type))
 
 (defmethod handle-event :default
-  [event-type event-data]))
+  [event-type event-data])
 
 (defmethod handle-event :message-create
   [event-type {{bot :bot} :author :keys [channel-id content]}]
