@@ -5,7 +5,8 @@
             [discljord.events :as e]
             [clojure.core.async :as a]
             [clojure.data.json :as json]
-            [rami2.storage :as storage]))
+            [rami2.storage :as storage]
+            [rami2.weather :as wx]))
 
 (def state (atom nil))
 
@@ -23,14 +24,12 @@
     (when-not bot
       (if (.contains (.toLowerCase content) "eddie")
         (m/create-message!
-          (:messaging @state)
-          channel-id :embed
-          { :image {:url "https://cdn.discordapp.com/attachments/173094635391025152/691489861739216906/691114417013915740.png"}}))
+          (:messaging @state) channel-id
+          :embed { :image {:url "https://cdn.discordapp.com/attachments/173094635391025152/691489861739216906/691114417013915740.png"}}))
       (if (.contains (.toLowerCase content) "bullshit")
         (m/create-message!
-          (:messaging @state)
-          channel-id :embed
-          { :image {:url "https://cdn.discordapp.com/attachments/610695135738593282/710590989437501450/blazing.gif"}}))
+          (:messaging @state) channel-id
+          :embed { :image {:url "https://cdn.discordapp.com/attachments/610695135738593282/710590989437501450/blazing.gif"}}))
       (if (.startsWith content ".")
         (let [sp (.split (.substring content 1) " ")
               command (first sp)
@@ -38,13 +37,14 @@
               storage (:storage @state)]
           (case command "aka" (reset! storage (storage/set-aka @storage args))
                         "print" (m/create-message!
-                                  (:messaging @state)
-                                  channel-id :content
-                                  (format "Filename: %s\nContents: %s" (:filename @storage) (:data @storage)))
+                                  (:messaging @state) channel-id
+                                  :content (format "Filename: %s\nContents: %s" (:filename @storage) (:data @storage)))
                         "exist" (m/create-message!
-                                  (:messaging @state)
-                                  channel-id :content
-                                  (format "AKA %s: %s" (first args) (str (storage/is-aka @storage (first args)))))
+                                  (:messaging @state) channel-id
+                                  :content (format "AKA %s: %s" (first args) (str (storage/is-aka @storage (first args)))))
+                        "w" (m/create-message!
+                                (:messaging @state) channel-id
+                                :embed (wx/get-weather (first args) state))
                         (if (storage/is-aka @storage command)
                           (m/create-message! (:messaging @state) channel-id :content (storage/get-aka @storage command)))))))))
 
