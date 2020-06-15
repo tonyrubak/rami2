@@ -44,7 +44,7 @@
                                   :content (format "AKA %s: %s" (first args) (str (storage/is-aka @storage (first args)))))
                         "w" (m/create-message!
                                 (:messaging @state) channel-id
-                                :embed (wx/get-weather (first args) state))
+                                :embed (wx/get-weather (java.lang.String/join " " args) state))
                         (if (storage/is-aka @storage command)
                           (m/create-message! (:messaging @state) channel-id :content (storage/get-aka @storage command)))))))))
 
