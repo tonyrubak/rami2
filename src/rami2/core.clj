@@ -6,7 +6,8 @@
             [clojure.core.async :as a]
             [clojure.data.json :as json]
             [rami2.storage :as storage]
-            [rami2.weather :as wx]))
+            [rami2.weather :as wx]
+            [rami2.markov :as markov]))
 
 (def state (atom nil))
 
@@ -45,6 +46,9 @@
                         "w" (m/create-message!
                                 (:messaging @state) channel-id
                                 :embed (wx/get-weather (java.lang.String/join " " args) state))
+                        "markov" (m/create-message!
+                                (:messaging @state) channel-id
+                                :content (markov/markov (first args) state))
                         (if (storage/is-aka @storage command)
                           (m/create-message! (:messaging @state) channel-id :content (storage/get-aka @storage command)))))))))
 
