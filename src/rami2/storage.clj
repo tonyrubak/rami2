@@ -14,8 +14,6 @@
     (let [dynamo (aws/client {:api :dynamodb})
         command (first aka)
         value (clojure.string/join " " (rest aka))]
-        (println command)
-        (println value)
         (aws/invoke
             dynamo
             {:op :PutItem
