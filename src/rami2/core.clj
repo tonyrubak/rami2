@@ -37,20 +37,15 @@
               args (rest sp)
               storage (:storage @state)]
           (case command "aka" (reset! storage (storage/set-aka @storage args))
-                        "print" (m/create-message!
-                                  (:messaging @state) channel-id
-                                  :content (format "Filename: %s\nContents: %s" (:filename @storage) (:data @storage)))
-                        "exist" (m/create-message!
-                                  (:messaging @state) channel-id
-                                  :content (format "AKA %s: %s" (first args) (str (storage/is-aka @storage (first args)))))
                         "w" (m/create-message!
-                                (:messaging @state) channel-id
+                            (:messaging @state) channel-id
                                 :embed (wx/get-weather (java.lang.String/join " " args) state))
                         "markov" (m/create-message!
-                                (:messaging @state) channel-id
-                                :content (markov/markov (first args) state))
-                        (if (storage/is-aka @storage command)
-                          (m/create-message! (:messaging @state) channel-id :content (storage/get-aka @storage command)))))))))
+                            (:messaging @state) channel-id
+                            :content (markov/markov (first args) state))
+                        (let [response (storage/get-aka command state)]
+                            (when-not (nil? response)
+                                (m/create-message! (:messaging @state) channel-id :content response)))))))))
 
 (defn -main
   "I don't do a whole lot ... yet."
@@ -63,7 +58,7 @@
         init-state {:connection connection-ch
                     :event event-ch
                     :messaging messaging-ch
-                    :storage (atom (storage/open-storage (:storage config)))
+                    ; :storage (atom (storage/open-storage (:storage config)))
                     :apikeys (:apikeys config)}]
       (reset! state init-state)
       (e/message-pump! event-ch handle-event)

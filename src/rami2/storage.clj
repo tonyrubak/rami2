@@ -1,20 +1,26 @@
-(ns rami2.storage)
+(ns rami2.storage
+    (:require [cognitect.aws.client.api :as aws]
+        [clojure.data.json :as json]))
 
-(defn open-storage
-    [file]
-    (with-open [r (java.io.PushbackReader. (clojure.java.io/reader file))]
-        {:data (clojure.edn/read r) :filename file}))
-(defn write-storage
-    [storage]
-    (spit (:filename storage) (with-out-str (pr (:data storage)))))
-(defn set-aka
-    [storage aka]
-    (let [storage {:filename (:filename storage) :data (assoc (:data storage) (keyword (first aka)) (first (rest aka)))}]
-        (write-storage storage)
-        storage))
-(defn is-aka
-    [storage aka]
-    (contains? (:data storage) (keyword aka)))
 (defn get-aka
-    [storage aka]
-    (get (:data storage) (keyword aka)))
+    [aka state]
+    (let [dynamo (aws/client {:api :dynamodb})]
+        (:S (:value (:Item (aws/invoke
+            dynamo
+            {:op :GetItem :request { :TableName "rami2" :Key {"tag" {:S aka}}}}))))))
+
+(defn set-aka
+    [aka state]
+    (let [dynamo (aws/client {:api :dynamodb})
+        command (first aka)
+        value (clojure.string/join " " (rest aka))]
+        (println command)
+        (println value)
+        (aws/invoke
+            dynamo
+            {:op :PutItem
+            :request { 
+                :ConditionExpression "attribute_not_exists(tag)"
+                :TableName "rami2" 
+                :Item {"tag" {:S command}
+                    "value" {:S value}}}})))
