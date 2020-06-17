@@ -49,7 +49,8 @@
                             (when-not (nil? response)
                                 (m/create-message!
                                  (:messaging @state) channel-id
-                                 :content response)))))))))
+                                 :content response)))))
+        (logging/log-raw (:logger @state) content)))))
 
 (defn -main
   "I don't do a whole lot ... yet."
@@ -63,7 +64,8 @@
                     :event event-ch
                     :messaging messaging-ch
                     ; :storage (atom (storage/open-storage (:storage config)))
-                    :apikeys (:apikeys config)}]
+                    :apikeys (:apikeys config)
+                    :logger (logging/create-rotating-logger (:logfile config))}]
       (reset! state init-state)
       (e/message-pump! event-ch handle-event)
       (m/stop-connection! messaging-ch)
