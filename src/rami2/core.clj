@@ -7,7 +7,8 @@
             [clojure.data.json :as json]
             [rami2.storage :as storage]
             [rami2.weather :as wx]
-            [rami2.markov :as markov]))
+            [rami2.markov :as markov]
+            [rami2.logging :as logging]))
 
 (def state (atom nil))
 
@@ -26,7 +27,7 @@
       (if (.contains (.toLowerCase content) "eddie")
         (m/create-message!
           (:messaging @state) channel-id
-          :embed { :image {:url "https://cdn.discordapp.com/attachments/173094635391025152/691489861739216906/691114417013915740.png"}}))
+          :embed {:image {:url "https://cdn.discordapp.com/attachments/173094635391025152/691489861739216906/691114417013915740.png"}}))
       (if (.contains (.toLowerCase content) "bullshit")
         (m/create-message!
           (:messaging @state) channel-id
@@ -39,13 +40,16 @@
           (case command "aka" (reset! storage (storage/set-aka @storage args))
                         "w" (m/create-message!
                             (:messaging @state) channel-id
-                                :embed (wx/get-weather (java.lang.String/join " " args) state))
+                                :embed (wx/get-weather
+                                        (java.lang.String/join " " args) state))
                         "markov" (m/create-message!
                             (:messaging @state) channel-id
                             :content (markov/markov (first args) state))
                         (let [response (storage/get-aka command state)]
                             (when-not (nil? response)
-                                (m/create-message! (:messaging @state) channel-id :content response)))))))))
+                                (m/create-message!
+                                 (:messaging @state) channel-id
+                                 :content response)))))))))
 
 (defn -main
   "I don't do a whole lot ... yet."
