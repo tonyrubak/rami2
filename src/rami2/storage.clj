@@ -7,7 +7,8 @@
     (let [dynamo (aws/client {:api :dynamodb})]
         (:S (:value (:Item (aws/invoke
             dynamo
-            {:op :GetItem :request { :TableName "rami2" :Key {"tag" {:S aka}}}}))))))
+            {:op :GetItem :request {:TableName "rami2" 
+                                    :Key       {"tag" {:S aka}}}}))))))
 
 (defn set-aka
     [aka state]
@@ -17,8 +18,8 @@
         (aws/invoke
             dynamo
             {:op :PutItem
-            :request { 
-                :ConditionExpression "attribute_not_exists(tag)"
-                :TableName "rami2" 
-                :Item {"tag" {:S command}
-                    "value" {:S value}}}})))
+             :request
+                {:ConditionExpression "attribute_not_exists(tag)"
+                 :TableName "rami2" 
+                 :Item {"tag"   {:S command}
+                        "value" {:S value}}}})))
