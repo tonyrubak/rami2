@@ -37,7 +37,7 @@
               command (first sp)
               args (rest sp)]
           (case command
-            "aka" (reset! storage (storage/set-aka @storage args))
+            "aka" (storage/set-aka args state)
             "w" (m/create-message!
                  (:messaging @state) channel-id
                  :embed (wx/get-weather
