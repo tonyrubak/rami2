@@ -5,16 +5,6 @@
   (let [logfile (new java.io.FileOutputStream path true)]
     {:path path :writer (atom logfile)}))
 
-(defn log-info
-  [logger text]
-  (let [dt (.toString (java.time.Instant/now))]
-    (log-write logger
-               (format "%s [INFO] %s\n" dt text))))
-
-(defn log-raw
-  [logger text]
-  (log-write logger (format "%s\n" text)))
-
 (defn log-write
   [logger text]
   (if-not (.exists (new java.io.File (:path logger)))
@@ -35,3 +25,13 @@
         )))
   (.write @(:writer logger)
           (.getBytes text (java.nio.charset.Charset/forName "UTF-8"))))
+
+(defn log-info
+  [logger text]
+  (let [dt (.toString (java.time.Instant/now))]
+    (log-write logger
+                (format "%s [INFO] %s\n" dt text))))
+
+(defn log-raw
+  [logger text]
+  (log-write logger (format "%s\n" text)))
