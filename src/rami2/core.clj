@@ -35,21 +35,21 @@
       (if (.startsWith content ".")
         (let [sp (.split (.substring content 1) " ")
               command (first sp)
-              args (rest sp)
-              storage (:storage @state)]
-          (case command "aka" (reset! storage (storage/set-aka @storage args))
-                "w" (m/create-message!
-                     (:messaging @state) channel-id
-                     :embed (wx/get-weather
-                             (java.lang.String/join " " args) state))
-                "markov" (m/create-message!
-                          (:messaging @state) channel-id
-                          :content (markov/markov (first args) state))
-                (let [response (storage/get-aka command state)]
-                  (when-not (nil? response)
-                    (m/create-message!
-                     (:messaging @state) channel-id
-                     :content response)))))
+              args (rest sp)]
+          (case command
+            "aka" (reset! storage (storage/set-aka @storage args))
+            "w" (m/create-message!
+                 (:messaging @state) channel-id
+                 :embed (wx/get-weather
+                         (java.lang.String/join " " args) state))
+            "markov" (m/create-message!
+                      (:messaging @state) channel-id
+                      :content (markov/markov (first args) state))
+            (let [response (storage/get-aka command state)]
+              (when-not (nil? response)
+                (m/create-message!
+                 (:messaging @state) channel-id
+                 :content response)))))
         (logging/log-raw (:logger @state) content)))))
 
 (defn -main
@@ -63,7 +63,6 @@
         init-state {:connection connection-ch
                     :event event-ch
                     :messaging messaging-ch
-                    ; :storage (atom (storage/open-storage (:storage config)))
                     :apikeys (:apikeys config)
                     :logger (logging/create-rotating-logger (:logfile config))}]
     (reset! state init-state)
