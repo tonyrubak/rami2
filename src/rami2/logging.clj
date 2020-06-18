@@ -2,14 +2,14 @@
 
 (defn create-rotating-logger
   [path]
-  (let [logfile (new java.io.FileOutputStream path true)]
+  (let [logfile (java.io.FileOutputStream. path true)]
     {:path path :writer (atom logfile)}))
 
 (defn log-write
   [logger text]
-  (if-not (.exists (new java.io.File (:path logger)))
+  (if-not (.exists (java.io.File. (:path logger)))
     (reset! (:writer logger)
-            (new java.io.FileOutputStream (:path logger) true))
+            (java.io.FileOutputStream. (:path logger) true))
     (let [attributes (java.nio.file.Files/readAttributes
                       (-> (:path logger) clojure.java.io/file .toPath)
                       java.nio.file.attribute.BasicFileAttributes
