@@ -26,37 +26,37 @@
     (when-not bot
       (if (.contains (.toLowerCase content) "eddie")
         (m/create-message!
-          (:messaging @state) channel-id
-          :embed {:image {:url "https://cdn.discordapp.com/attachments/173094635391025152/691489861739216906/691114417013915740.png"}}))
+         (:messaging @state) channel-id
+         :embed {:image {:url "https://cdn.discordapp.com/attachments/173094635391025152/691489861739216906/691114417013915740.png"}}))
       (if (.contains (.toLowerCase content) "bullshit")
         (m/create-message!
-          (:messaging @state) channel-id
-          :embed { :image {:url "https://cdn.discordapp.com/attachments/610695135738593282/710590989437501450/blazing.gif"}}))
+         (:messaging @state) channel-id
+         :embed {:image {:url "https://cdn.discordapp.com/attachments/610695135738593282/710590989437501450/blazing.gif"}}))
       (if (.startsWith content ".")
         (let [sp (.split (.substring content 1) " ")
               command (first sp)
               args (rest sp)
               storage (:storage @state)]
           (case command "aka" (reset! storage (storage/set-aka @storage args))
-                        "w" (m/create-message!
-                            (:messaging @state) channel-id
-                                :embed (wx/get-weather
-                                        (java.lang.String/join " " args) state))
-                        "markov" (m/create-message!
-                            (:messaging @state) channel-id
-                            :content (markov/markov (first args) state))
-                        (let [response (storage/get-aka command state)]
-                            (when-not (nil? response)
-                                (m/create-message!
-                                 (:messaging @state) channel-id
-                                 :content response)))))
+                "w" (m/create-message!
+                     (:messaging @state) channel-id
+                     :embed (wx/get-weather
+                             (java.lang.String/join " " args) state))
+                "markov" (m/create-message!
+                          (:messaging @state) channel-id
+                          :content (markov/markov (first args) state))
+                (let [response (storage/get-aka command state)]
+                  (when-not (nil? response)
+                    (m/create-message!
+                     (:messaging @state) channel-id
+                     :content response)))))
         (logging/log-raw (:logger @state) content)))))
 
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
   (let [config (with-open [r (java.io.PushbackReader. (clojure.java.io/reader "config.edn"))]
-                  (clojure.edn/read r))
+                 (clojure.edn/read r))
         event-ch (a/chan 100)
         connection-ch (c/connect-bot! (:token config) event-ch)
         messaging-ch (m/start-connection! (:token config))
@@ -66,7 +66,7 @@
                     ; :storage (atom (storage/open-storage (:storage config)))
                     :apikeys (:apikeys config)
                     :logger (logging/create-rotating-logger (:logfile config))}]
-      (reset! state init-state)
-      (e/message-pump! event-ch handle-event)
-      (m/stop-connection! messaging-ch)
-      (c/disconnect-bot! connection-ch)))
+    (reset! state init-state)
+    (e/message-pump! event-ch handle-event)
+    (m/stop-connection! messaging-ch)
+    (c/disconnect-bot! connection-ch)))
