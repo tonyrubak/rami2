@@ -52,8 +52,8 @@
                     :embed (let [resp search/get-search-response args state]
                              {:title (format "Bing results for %s" (str/join args " "))
                              :type "link"
-                             :description (:snippet resp)
-                             :url (:url resp)})))
+                             :description (get resp "snippet")
+                             :url (get resp "url")})))
             (let [response (storage/get-aka command state)]
               (when-not (nil? response)
                 (m/create-message!
