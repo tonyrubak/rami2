@@ -59,13 +59,7 @@
                 (m/create-message!
                  (:messaging @state) channel-id
                  :content response)))))
-        (logging/log-raw (:logger @state) content)))))
-
-(defn initialize []
-  (let [config (with-open [r (java.io.PushbackReader. (clojure.java.io/reader "config.edn"))]
-                 (clojure.edn/read r))
-        init-state {:apikeys (:apikeys config)}]
-    init-state))
+        (logging/log-raw (:logger @state) content))))
 
 (defn -main
   "I don't do a whole lot ... yet."
