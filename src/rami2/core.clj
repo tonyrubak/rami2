@@ -5,10 +5,12 @@
             [discljord.events :as e]
             [clojure.core.async :as a]
             [clojure.data.json :as json]
+            [clojure.string :as str]
             [rami2.storage :as storage]
             [rami2.weather :as wx]
             [rami2.markov :as markov]
-            [rami2.logging :as logging]))
+            [rami2.logging :as logging]
+            [rami2.search :as search]))
 
 (def state (atom nil))
 
@@ -45,12 +47,25 @@
             "markov" (m/create-message!
                       (:messaging @state) channel-id
                       :content (markov/markov (first args) state))
+            "bing" (m/create-message!
+                    (:messaging @state) channel-id
+                    :embed (let [resp search/get-search-response args state]
+                             {:title (format "Bing results for %s" (str/join args " "))
+                             :type "link"
+                             :description (:snippet resp)
+                             :url (:url resp)})))
             (let [response (storage/get-aka command state)]
               (when-not (nil? response)
                 (m/create-message!
                  (:messaging @state) channel-id
                  :content response)))))
         (logging/log-raw (:logger @state) content)))))
+
+(defn initialize []
+  (let [config (with-open [r (java.io.PushbackReader. (clojure.java.io/reader "config.edn"))]
+                 (clojure.edn/read r))
+        init-state {:apikeys (:apikeys config)}]
+    init-state))
 
 (defn -main
   "I don't do a whole lot ... yet."
