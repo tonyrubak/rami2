@@ -9,8 +9,8 @@
           api-key (:azure (:apikeys @state))
           headers {"Ocp-Apim-Subscription-Key" api-key}
           params {"q" formatted-query
-                 "textDecorations" true
-                 "textFormat" "HTML"}]
+                 "textDecorations" false
+                 "textFormat" "raw"}]
         (-> (client/get url {:headers headers :query-params params})
             :body
             json/read-str
