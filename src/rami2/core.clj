@@ -35,12 +35,31 @@
         (let [sp (.split (.substring content 1) " ")
               command (first sp)
               args (rest sp)]
-          (let [resp (command/invoke-command {:command (keyword command)
-                                             :args args} state)]
-            (m/create-message!
-             (:messaging @state) channel-id
-             (:type resp) (:value resp)))))
-      (logging/log-raw (:logger @state) content))))
+          (case command
+            "aka" (storage/set-aka args state)
+            "w" (m/create-message!
+                 (:messaging @state) channel-id
+                 :embed (wx/get-weather
+                         (java.lang.String/join " " args) state))
+            "markov" (m/create-message!
+                      (:messaging @state) channel-id
+                      :content (markov/markov (first args) state))
+            "bing" (m/create-message!
+                    (:messaging @state) channel-id
+                    :embed (let [resp (search/get-search-response args state)
+                                q (str/join " " args)]
+                             {:title (format "Bing results for %s" q)
+                             :type "link"
+                             :description (get resp "snippet")
+                             :url (get resp "url")
+                             :fields [{:name "URL" :value (get resp "url")}]
+                             :thumbnail {:url "https://1000logos.net/wp-content/uploads/2017/12/bing-emblem.jpg"}}))
+            (let [response (storage/get-aka command state)]
+              (when-not (nil? response)
+                (m/create-message!
+                 (:messaging @state) channel-id
+                 :content response))))))
+        (logging/log-raw (:logger @state) content))))
 
 (defn -main
   "I don't do a whole lot ... yet."
