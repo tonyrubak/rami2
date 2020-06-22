@@ -6,12 +6,7 @@
             [clojure.core.async :as a]
             [clojure.data.json :as json]
             [clojure.string :as str]
-            [rami2.command :as command]
-            [rami2.storage :as storage]
-            [rami2.weather :as wx]
-            [rami2.markov :as markov]
             [rami2.logging :as logging]
-            [rami2.search :as search]
             [rami2.command :as command]))
 
 (def state (atom nil))
@@ -40,7 +35,8 @@
         (let [sp (.split (.substring content 1) " ")
               command (first sp)
               args (rest sp)]
-          (let [resp (command/invoke-command (keyword command))]
+          (let [resp (command/invoke-command {:command (keyword command)
+                                             :args args} state)]
             (m/create-message!
              (:messaging @state) channel-id
              (:type resp) (:value resp)))))

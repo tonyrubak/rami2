@@ -40,6 +40,3 @@
            (if-let [response (storage/get-aka aka state)]
              response
              (format "%s not found" aka)))})
-
-(let [command {:command :w :args ["48170"]}]
-  (rami2.command/invoke-command command nil))
