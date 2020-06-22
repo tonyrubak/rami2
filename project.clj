@@ -8,7 +8,8 @@
                     [com.cognitect.aws/api "0.8.456"]
                     [com.cognitect.aws/endpoints "1.1.11.789"]
                     [com.cognitect.aws/dynamodb "799.2.679.0"]
-                    [com.cognitect.aws/lambda "796.2.667.0"]]
+                    [com.cognitect.aws/lambda "796.2.667.0"]
+                    [clj-http "3.10.1"]]
     :main ^:skip-aot rami2.core
     :target-path "target/%s"
     :profiles {:uberjar {:aot :all}})

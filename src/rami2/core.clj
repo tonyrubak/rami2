@@ -5,10 +5,14 @@
             [discljord.events :as e]
             [clojure.core.async :as a]
             [clojure.data.json :as json]
+            [clojure.string :as str]
+            [rami2.command :as command]
             [rami2.storage :as storage]
             [rami2.weather :as wx]
             [rami2.markov :as markov]
-            [rami2.logging :as logging]))
+            [rami2.logging :as logging]
+            [rami2.search :as search]
+            [rami2.command :as command]))
 
 (def state (atom nil))
 
@@ -36,21 +40,11 @@
         (let [sp (.split (.substring content 1) " ")
               command (first sp)
               args (rest sp)]
-          (case command
-            "aka" (storage/set-aka args state)
-            "w" (m/create-message!
-                 (:messaging @state) channel-id
-                 :embed (wx/get-weather
-                         (java.lang.String/join " " args) state))
-            "markov" (m/create-message!
-                      (:messaging @state) channel-id
-                      :content (markov/markov (first args) state))
-            (let [response (storage/get-aka command state)]
-              (when-not (nil? response)
-                (m/create-message!
-                 (:messaging @state) channel-id
-                 :content response)))))
-        (logging/log-raw (:logger @state) content)))))
+          (let [resp (command/invoke-command (keyword command))]
+            (m/create-message!
+             (:messaging @state) channel-id
+             (:type resp) (:value resp)))))
+      (logging/log-raw (:logger @state) content))))
 
 (defn -main
   "I don't do a whole lot ... yet."
