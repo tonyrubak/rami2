@@ -8,6 +8,7 @@
             [clojure.string :as str]
             [rami2.logging :as logging]
             [rami2.command :as command]
+            [rami2.markov :as markov]
             [rami2.search :as search]
             [rami2.storage :as storage]
             [rami2.weather :as wx]))
