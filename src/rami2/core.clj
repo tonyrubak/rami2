@@ -56,12 +56,12 @@
                              :description (get resp "snippet")
                              :url (get resp "url")
                              :fields [{:name "URL" :value (get resp "url")}]
-                             :thumbnail {:url "https://1000logos.net/wp-content/uploads/2017/12/bing-emblem.jpg"}})))
+                             :thumbnail {:url "https://1000logos.net/wp-content/uploads/2017/12/bing-emblem.jpg"}}))
             (let [response (storage/get-aka command state)]
               (when-not (nil? response)
                 (m/create-message!
                  (:messaging @state) channel-id
-                 :content response)))))
+                 :content response))))))
         (logging/log-raw (:logger @state) content))))
 
 (defn -main
