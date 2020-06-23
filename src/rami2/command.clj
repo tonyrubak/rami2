@@ -39,4 +39,4 @@
   :value (let [aka (:command command)]
            (if-let [response (storage/get-aka aka state)]
              response
-             (format "%s not found" aka)))})
+             nil))})

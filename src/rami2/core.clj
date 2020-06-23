@@ -39,7 +39,7 @@
         (let [sp (.split (.substring content 1) " ")
               comm (first sp)
               args (rest sp)]
-          (let [resp (command/invoke-command
+          (if-let [resp (command/invoke-command
                       {:command comm
                       :args args}
                       state)]
