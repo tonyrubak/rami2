@@ -23,10 +23,13 @@
   [event-type event-data])
 
 (defmethod handle-event :message-create
-  [event-type {{bot :bot} :author :keys [channel-id content]}]
+  [event-type {{bot :bot} :author
+              {author :username} :author
+              :keys [channel-id content]}]
   (if (= content "!disconnect")
     (a/put! (:connection @state) [:disconnect])
     (when-not bot
+      ;;; REACTS NEED TO GO INTO THEIR OWN MODULE
       (if (.contains (.toLowerCase content) "eddie")
         (m/create-message!
          (:messaging @state) channel-id
@@ -35,6 +38,15 @@
         (m/create-message!
          (:messaging @state) channel-id
          :embed {:image {:url "https://cdn.discordapp.com/attachments/610695135738593282/710590989437501450/blazing.gif"}}))
+      (if (some? (-> content .toLowerCase (#(re-find #"twitch\.tv/|smash\.gg/" %))))
+        (let [channel-name (:name @(m/get-channel! (:messaging @state) channel-id))
+              mesg (format "%s linked to a twitch.tv stream in the message - %s - in %s"
+                           author content channel-name)]
+          (println mesg)
+          (m/create-message!
+            (:messaging @state) 406853584202760192 ; this should *really* go in a config file
+            :content mesg)))
+      ;;;
       (if (.startsWith content ".")
         (let [sp (.split (.substring content 1) " ")
               comm (first sp)
