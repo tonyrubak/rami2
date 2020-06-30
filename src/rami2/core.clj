@@ -53,7 +53,8 @@
               args (rest sp)]
           (if-let [resp (command/invoke-command
                       {:command comm
-                      :args args}
+                      :args args
+                      :author author}
                       state)]
             (m/create-message!
              (:messaging @state) channel-id
