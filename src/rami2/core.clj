@@ -26,8 +26,9 @@
   [event-type {{bot :bot} :author
               {author :username} :author
               :keys [channel-id content]}]
-  (if (= content "!disconnect")
+  (if (and (= content "!disconnect") (contains? (:admin @state) author))
     (a/put! (:connection @state) [:disconnect])
+    (do (println (:admin @state)) (println author)
     (when-not bot
       ;;; REACTS NEED TO GO INTO THEIR OWN MODULE
       (if (.contains (.toLowerCase content) "eddie")
@@ -58,7 +59,7 @@
             (m/create-message!
              (:messaging @state) channel-id
              (:type resp) (:value resp)))))
-        (logging/log-raw (:logger @state) content))))
+        (logging/log-raw (:logger @state) content)))))
 
 (defn -main
   "I don't do a whole lot ... yet."
@@ -72,7 +73,8 @@
                     :event event-ch
                     :messaging messaging-ch
                     :apikeys (:apikeys config)
-                    :logger (logging/create-rotating-logger (:logfile config))}]
+                    :logger (logging/create-rotating-logger (:logfile config))
+                    :admin (:admin config)}]
     (reset! state init-state)
     (e/message-pump! event-ch handle-event)
     (m/stop-connection! messaging-ch)
