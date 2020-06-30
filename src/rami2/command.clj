@@ -21,6 +21,11 @@
               "Failed to remove AKA. Maybe it doesn't exist?")
             "Not authorized.")})
 
+(defmethod invoke-command "list" [command state]
+  {:type :content
+   :value (str/join ", "
+                    (map #(-> % :tag :S) (:Items (storage/list-aka state))))})
+
 (defmethod invoke-command "bing" [command state]
   {:type :embed
   :value (let [args (:args command)

@@ -29,6 +29,14 @@
                         "value" {:S value}}}})]
     (not= (:cognitect.anomalies/category resp) :cognitect.anomalies/incorrect)))
 
+(defn list-aka
+  [state]
+  (aws/invoke (aws/client {:api :dynamodb})
+              {:op :Scan
+              :request
+               {:TableName "rami2"
+               :ProjectionExpression "tag"}}))
+
 (defn delete-aka
   [aka state]
     (let [dynamo (aws/client {:api :dynamodb})
@@ -61,3 +69,9 @@
 ;     (aws/invoke dynamo
 ;                 {:op :DeleteItem :request {:TableName "rami2"
 ;                                            :Key {"tag" {:S "test"}}}}))
+
+; (aws/invoke (aws/client {:api :dynamodb})
+;   {:op :Scan
+;   :request
+;    {:TableName "rami2"
+;    :ProjectionExpression "tag"}})
