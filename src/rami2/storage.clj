@@ -1,32 +1,44 @@
 (ns rami2.storage
-    (:require [cognitect.aws.client.api :as aws]
-        [clojure.data.json :as json]))
+  (:require
+   [cognitect.aws.client.api :as aws]
+   [clojure.data.json :as json]))
 
 (defn get-aka
-    [aka state]
+  [aka state]
     (let [dynamo (aws/client {:api :dynamodb})
-         resp (aws/invoke dynamo
+          resp (aws/invoke dynamo
                           {:op :GetItem
-                          :request {:TableName "rami2" 
-                                   :Key       {"tag" {:S aka}}}})]
+                           :request {:TableName "rami2" 
+                                     :Key {"tag" {:S aka}}}})]
       (if-not (empty? resp)
         (-> resp :Item :value :S)
         nil)))
 
 (defn set-aka
-    [aka state]
-    (let [dynamo (aws/client {:api :dynamodb})
+  [aka state]
+  (let [dynamo (aws/client {:api :dynamodb})
         command (first aka)
-        value (clojure.string/join " " (rest aka))]
-        (aws/invoke
-            dynamo
-            {:op :PutItem
-             :request
+        value (clojure.string/join " " (rest aka))
+        resp (aws/invoke
+              dynamo
+              {:op :PutItem
+               :request
                 {:ConditionExpression "attribute_not_exists(tag)"
                  :TableName "rami2" 
                  :Item {"tag"   {:S command}
-                        "value" {:S value}}}})))
+                        "value" {:S value}}}})]
+    (not= (:cognitect.anomalies/category resp) :cognitect.anomalies/incorrect)))
 
+(defn delete-aka
+  [aka state]
+    (let [dynamo (aws/client {:api :dynamodb})
+          command (first aka)
+          resp (aws/invoke dynamo
+                          {:op :DeleteItem
+                            :request {:TableName "rami2" 
+                                      :Key {"tag" {:S command}}}})]
+      (not= (:cognitect.anomalies/category resp)
+            :cognitect.anomalies/incorrect)))
 ;;;
 ; (let [dynamo (aws/client {:api :dynamodb})]
 ;     (aws/invoke dynamo
@@ -37,3 +49,15 @@
 ;     (aws/invoke dynamo
 ;                 {:op :GetItem :request {:TableName "rami2"
 ;                                        :Key        {"tag" {:S "dave"}}}}))
+
+; (def badresp (let [dynamo (aws/client {:api :dynamodb})]
+;     (aws/invoke dynamo
+;                 {:op :PutItem :request {:TableName "rami2"
+;                                        :ConditionExpression "attribute_not_exists(tag)"
+;                                        :Item       {"tag" {:S "dave"}
+;                                                    "value" {:S "value"}}}})))
+
+(let [dynamo (aws/client {:api :dynamodb})]
+    (aws/invoke dynamo
+                {:op :DeleteItem :request {:TableName "rami2"
+                                           :Key {"tag" {:S "test"}}}}))
