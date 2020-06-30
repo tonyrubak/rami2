@@ -57,7 +57,7 @@
 ;                                        :Item       {"tag" {:S "dave"}
 ;                                                    "value" {:S "value"}}}})))
 
-(let [dynamo (aws/client {:api :dynamodb})]
-    (aws/invoke dynamo
-                {:op :DeleteItem :request {:TableName "rami2"
-                                           :Key {"tag" {:S "test"}}}}))
+; (let [dynamo (aws/client {:api :dynamodb})]
+;     (aws/invoke dynamo
+;                 {:op :DeleteItem :request {:TableName "rami2"
+;                                            :Key {"tag" {:S "test"}}}}))
