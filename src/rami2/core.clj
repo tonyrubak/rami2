@@ -28,7 +28,6 @@
               :keys [channel-id content]}]
   (if (and (= content "!disconnect") (contains? (:admin @state) author))
     (a/put! (:connection @state) [:disconnect])
-    (do (println (:admin @state)) (println author)
     (when-not bot
       ;;; REACTS NEED TO GO INTO THEIR OWN MODULE
       (if (.contains (.toLowerCase content) "eddie")
@@ -58,7 +57,7 @@
                       state)]
             (m/create-message!
              (:messaging @state) channel-id
-             (:type resp) (:value resp)))))
+             (:type resp) (:value resp))))
         (logging/log-raw (:logger @state) content)))))
 
 (defn -main
