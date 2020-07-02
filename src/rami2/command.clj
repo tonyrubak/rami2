@@ -1,8 +1,5 @@
 (ns rami2.command
-  (:require [rami2.search :as search]
-            [rami2.markov :as markov]
-            [rami2.storage :as storage]
-            [rami2.weather :as wx]
+  (:require [rami2.storage :as storage]
             [clojure.string :as str]))
 
 (defmulti invoke-command :command)

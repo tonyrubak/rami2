@@ -1,9 +1,7 @@
 (ns rami2.weather
-  (:require [clojure.data.json :as json]))
-
-(defmethod invoke-command "w" [command state]
-  (let [resp (wx/get-weather (str/join " " (:args command)) state)]
-    {:type :embed :value resp}))
+  (:require [clojure.data.json :as json]
+            [clojure.string :as str]
+            [rami2.command :as command]))
 
 (defn get-weather
   [location state]
@@ -23,3 +21,7 @@
               {:name "Wind Speed" :value (format "%.0f miles per hour" (double (get (get response "wind") "speed"))) :inline true}
               {:name "Pressure" :value (format "%.2f inHg" (* 0.02953 (double (get (get response "main") "pressure")))) :inline true}
               {:name "Cloudiness" :value (format "%s" (get (nth (get response "weather") 0) "description")) :inline true}]}))
+
+(defmethod command/invoke-command "w" [cmd state]
+  (let [resp (get-weather (str/join " " (:args cmd)) state)]
+    {:type :embed :value resp}))

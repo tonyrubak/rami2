@@ -1,14 +1,7 @@
 (ns rami2.markov
   (:require [cognitect.aws.client.api :as aws]
-            [clojure.data.json :as json]))
-
-
-(defmethod invoke-command "markov" [command state]
-  {:type :content
-    :value (markov/markov (-> command
-                              :args
-                              first)
-                          state)})
+            [clojure.data.json :as json]
+            [rami2.command :as command]))
 
 (defn markov
   [prefix state]
@@ -28,3 +21,10 @@
                            :Payload (format "{ \"prefix\": \"%s\" }"
                                             prefix)}}))))
           "body") "\"" ""))))
+
+(defmethod command/invoke-command "markov" [cmd state]
+  {:type :content
+    :value (markov (-> cmd
+                       :args
+                       first)
+                   state)})
