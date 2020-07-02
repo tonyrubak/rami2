@@ -2,6 +2,14 @@
   (:require [cognitect.aws.client.api :as aws]
             [clojure.data.json :as json]))
 
+
+(defmethod invoke-command "markov" [command state]
+  {:type :content
+    :value (markov/markov (-> command
+                              :args
+                              first)
+                          state)})
+
 (defn markov
   [prefix state]
   (if (= prefix "communism")

@@ -27,27 +27,6 @@
                     (map #(-> % :tag :S)
                          (:Items (storage/list-aka state))))})
 
-(defmethod invoke-command "bing" [command state]
-  {:type :embed
-   :value (let [resp (search/get-search-response (:args command) state)]
-            {:title (format "Bing results for %s" (str/join " " args))
-             :type "link"
-             :description (get resp "snippet")
-             :url (get resp "url")
-             :fields [{:name "URL" :value (get resp "url")}]
-             :thumbnail {:url "https://1000logos.net/wp-content/uploads/2017/12/bing-emblem.jpg"}})})
-
-(defmethod invoke-command "w" [command state]
-  (let [resp (wx/get-weather (str/join " " (:args command)) state)]
-    {:type :embed :value resp}))
-
-(defmethod invoke-command "markov" [command state]
-    {:type :content
-     :value (markov/markov (-> command
-                               :args
-                               first)
-                           state)})
-
 (defmethod invoke-command :default [command state]
   {:type :content
    :value (if-let [response (storage/get-aka (:command command) state)]

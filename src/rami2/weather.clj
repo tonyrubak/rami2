@@ -1,6 +1,10 @@
 (ns rami2.weather
   (:require [clojure.data.json :as json]))
 
+(defmethod invoke-command "w" [command state]
+  (let [resp (wx/get-weather (str/join " " (:args command)) state)]
+    {:type :embed :value resp}))
+
 (defn get-weather
   [location state]
   (let [response (json/read-str
