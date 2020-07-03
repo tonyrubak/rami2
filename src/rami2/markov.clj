@@ -7,20 +7,17 @@
   [prefix state]
   (if (= prefix "communism")
     "communism begins"
-    (let [lambda (aws/client {:api :lambda})]
-      (.replaceAll
-        (get
-          (json/read-str
-            (slurp
-              (:Payload
-                (aws/invoke
-                  lambda
-                  {:op :Invoke
-                  :request {:FunctionName "markov"
-                           :LogType "None"
-                           :Payload (format "{ \"prefix\": \"%s\" }"
-                                            prefix)}}))))
-          "body") "\"" ""))))
+    (let [resp (aws/invoke (aws/client {:api :lambda})
+                           {:op :Invoke
+                            :request {:FunctionName "markov"
+                                      :Payload (format "{ \"prefix\": \"%s\" }"
+                                                       prefix)}})]
+      (-> resp
+          :Payload
+          slurp
+          json/read-str
+          (get "body")
+          (.replaceAll "\"" "")))))
 
 (defmethod command/invoke-command "markov" [cmd state]
   {:type :content
