@@ -24,6 +24,10 @@
                     (map #(-> % :tag :S)
                          (:Items (storage/list-aka state))))})
 
+(defmethod invoke-command "echo" [command state]
+  {:type :content
+  :value (str/join " " (:args command))})
+
 (defmethod invoke-command :default [command state]
   {:type :content
    :value (if-let [response (storage/get-aka (:command command) state)]
