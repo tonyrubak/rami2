@@ -2,7 +2,6 @@
   (:require [clojure.data.json :as json]
             [clojure.string :as str]
             [clj-http.client :as client]
-            [cheshire.core :refer :all]
             [rami2.command :as command]))
 
 (defn get-translate-response [target query state]
