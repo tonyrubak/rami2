@@ -17,7 +17,7 @@
           slurp
           json/read-str
           (get "body")
-          (org.apache.commons.lang3.StringEscapeUtils/unescapeJava)
+          org.apache.commons.lang3.StringEscapeUtils/unescapeJava
           (.replaceAll "\"" "")))))
 
 (defmethod command/invoke-command "markov" [cmd state]
