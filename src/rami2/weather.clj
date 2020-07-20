@@ -23,8 +23,10 @@
 
 (defn query-openweather [location state]
   (json/read-str
-    (slurp
-     (format-request (:axios (:apikeys @state)) location))))
+    (:body
+     (client/get
+      "https://api.openweathermap.org/data/2.5/weather"
+      (format-request (:axios (:apikeys @state)) location)))))
 
 (defmethod command/invoke-command "w" [cmd state]
   (let [query (str/join " " (:args cmd))]
