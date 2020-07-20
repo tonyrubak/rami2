@@ -4,23 +4,32 @@
             [clj-http.client :as client]
             [rami2.command :as command]))
 
-(defn get-translate-response [target query state]
-  (let [url "https://api.cognitive.microsofttranslator.com/translate?api-version=3.0"
-        api-key (:translate (:apikeys @state))]
-    (-> (client/post url {:headers {"Ocp-Apim-Subscription-Key" api-key}
-                      :content-type :json
-                      :query-params {:to target}
-                      :body (format "[{\"Text\": \"%s\"}]" query)})
-        :body
-        json/read-str
-        (nth 0)
-        (get "translations")
-        (nth 0)
-        (get "text"))))
+(defn transform-response [response]
+  (-> response
+      :body
+      json/read-str
+      (nth 0)
+      (get "translations")
+      (nth 0)
+      (get "text")))
+
+(defn format-request [api-key target query]
+  {:headers {"Ocp-Apim-Subscription-Key" api-key}
+   :content-type :json
+   :query-params {:to target
+                  :api-version 3.0}
+   :body (json/write-str [{:Text query}])})
+
+(defn query-azure [api-key target query]
+  (client/post
+    "https://api.cognitive.microsofttranslator.com/translate"
+    (format-request api-key target query)))
 
 (defmethod command/invoke-command "translate" [cmd state]
-  {:type :content
-    :value (get-translate-response
-            (first (:args cmd))
-            (str/join " " (rest (:args cmd)))
-            state)})
+  (let [api-key (:translate (:apikeys @state))
+        target (first (:args cmd))
+        query (str/join " " (rest (:args cmd)))
+        translation (transform-response
+                     (query-azure api-key target query))]
+    {:type :content
+     :value translation}))
