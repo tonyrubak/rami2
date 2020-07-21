@@ -33,19 +33,21 @@
       ;;; REACTS NEED TO GO INTO THEIR OWN MODULE
       (if (.contains (.toLowerCase content) "eddie")
         (m/create-message!
-         (:messaging @state) channel-id
+         (:messaging @state)
+         channel-id
          :embed {:image {:url "https://cdn.discordapp.com/attachments/173094635391025152/691489861739216906/691114417013915740.png"}}))
       (if (.contains (.toLowerCase content) "bullshit")
         (m/create-message!
-         (:messaging @state) channel-id
+         (:messaging @state)
+         channel-id
          :embed {:image {:url "https://cdn.discordapp.com/attachments/610695135738593282/710590989437501450/blazing.gif"}}))
       (if (some? (-> content .toLowerCase (#(re-find #"twitch\.tv/|smash\.gg/" %))))
         (let [channel-name (:name @(m/get-channel! (:messaging @state) channel-id))
               mesg (format "%s linked to a twitch.tv stream in the message - %s - in %s"
                            author content channel-name)]
-          (println mesg)
           (m/create-message!
-            (:messaging @state) 406853584202760192 ; this should *really* go in a config file
+            (:messaging @state)
+            406853584202760192
             :content mesg)))
       ;;;
       (if (.startsWith content ".")
@@ -58,8 +60,10 @@
                       :author author}
                       state)]
             (m/create-message!
-             (:messaging @state) channel-id
-             (:type resp) (:value resp))))
+             (:messaging @state)
+             channel-id
+             (:type resp)
+             (:value resp))))
         (logging/log-raw (:logger @state) content)))))
 
 (defn -main
