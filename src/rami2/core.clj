@@ -9,6 +9,7 @@
             [rami2.aka :as aka]
             [rami2.logging :as logging]
             [rami2.command :as command]
+            [rami2.image :as image]
             [rami2.markov :as markov]
             [rami2.search :as search]
             [rami2.storage :as storage]

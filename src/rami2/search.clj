@@ -20,40 +20,6 @@
         first
         (#(select-keys % ["url" "snippet"])))))
 
-(defn format-query [query]
-  (client/url-encode-illegal-characters
-   (str/join "+" query)))
-
-(defn format-request [query api-key]
-  {:headers {"Ocp-Apim-Subscription-Key" api-key}
-   :query-params {"q" (format-query query)
-                  "safeSearch" "moderate"}})
-
-(defn query-azure-image [request]
-  (let [url "https://api.cognitive.microsoft.com/bing/v7.0/images/search"]
-    (client/get url request)))
-
-(defn get-images-from-response [response]
-  (-> response
-      :body
-      json/read-str
-      (get "value")))
-
-(defn transform-response [response]
-  (let [images (get-images-from-response response)]
-    (-> images
-        (nth (rand-int (count images)))
-        (get "contentUrl"))))
-
-(defmethod command/invoke-command "image" [cmd state]
-  (let [api-key (:azure (:apikeys @state))
-        query (:args cmd)
-        img-url (transform-response
-                      (query-azure-image
-                       (format-request query api-key)))]
-    {:type :embed
-     :value {:image {:url img-url}}}))
-
 (defmethod command/invoke-command "bing" [cmd state]
   {:type :embed
     :value (let [resp (get-search-response (:args cmd) state)]
