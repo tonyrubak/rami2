@@ -7,7 +7,7 @@
 (defmethod invoke-command "aka" [command state]
   {:type :content
    :value (if (storage/set-aka (:args command) state)
-            "AKA added successfully."
+            (format "AKA `%s` added successfully." (first (:args command)))
             "Failed to add AKA. Maybe it already exists?")})
 
 (defmethod invoke-command "delaka" [command state]
