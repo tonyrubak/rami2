@@ -20,16 +20,17 @@
                   :api-version 3.0}
    :body (json/write-str [{:Text query}])})
 
-(defn query-azure [api-key target query]
+(defn query-azure [query]
   (client/post
     "https://api.cognitive.microsofttranslator.com/translate"
-    (format-request api-key target query)))
+    query))
 
 (defmethod command/invoke-command "translate" [cmd state]
   (let [api-key (:translate (:apikeys @state))
         target (first (:args cmd))
         query (str/join " " (rest (:args cmd)))
         translation (transform-response
-                     (query-azure api-key target query))]
+                     (query-azure
+                      (format-request api-key target query)))]
     {:type :content
      :value translation}))
