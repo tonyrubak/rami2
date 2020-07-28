@@ -21,8 +21,9 @@
 (defmethod invoke-command "list" [command state]
   {:type :content
    :value (str/join ", "
-                    (map #(-> % :tag :S)
-                         (:Items (storage/list-aka state))))})
+                    (sort
+                     (map #(-> % :tag :S)
+                          (:Items (storage/list-aka state)))))})
 
 (defmethod invoke-command "echo" [command state]
   {:type :content
