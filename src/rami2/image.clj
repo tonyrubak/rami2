@@ -11,7 +11,7 @@
 (defn format-request [query api-key]
   {:headers {"Ocp-Apim-Subscription-Key" api-key}
    :query-params {"q" query
-                  "safeSearch" "moderate"}})
+                  "safeSearch" "strict"}})
 
 (defn query-azure [request]
   (let [url "https://api.cognitive.microsoft.com/bing/v7.0/images/search"]
