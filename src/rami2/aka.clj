@@ -17,12 +17,21 @@
               "Failed to remove AKA. Maybe it doesn't exist?")
             "Not authorized.")})
 
+;(defmethod command/invoke-command "list" [command state]
+;  {:type :content
+;    :value (str/join ", "
+;                    (sort
+;                      (map #(-> % :tag :S)
+;                          (:Items (storage/list-aka state)))))})
+
 (defmethod command/invoke-command "list" [command state]
-  {:type :content
-    :value (str/join ", "
-                    (sort
-                      (map #(-> % :tag :S)
-                          (:Items (storage/list-aka state)))))})
+  (let [keys (map #(-> % :tag :S)
+                  (:Items (storage/list-aka state)))]
+    {:type :content
+     :value (str/join ", "
+                      (sort (if-let [search (first (:args command))]
+                              (filter #(.contains % search) keys)
+                              keys)))}))
 
 (defmethod command/invoke-command :default [command state]
   {:type :content
