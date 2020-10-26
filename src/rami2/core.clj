@@ -28,29 +28,29 @@
 (defmethod handle-event :message-create
   [event-type {{bot :bot} :author
               {author :username} :author
-              :keys [channel-id content]}]
+              :keys [guild-id id channel-id content]}]
   (if (and (= content "!disconnect") (contains? (:admin @state) author))
     (a/put! (:connection @state) [:disconnect])
     (when-not bot
       ;;; REACTS NEED TO GO INTO THEIR OWN MODULE
-      (if (.contains (.toLowerCase content) "eddie")
-        (m/create-message!
-         (:messaging @state)
-         channel-id
-         :embed {:image {:url "https://cdn.discordapp.com/attachments/173094635391025152/691489861739216906/691114417013915740.png"}}))
-      (if (.contains (.toLowerCase content) "bullshit")
-        (m/create-message!
-         (:messaging @state)
-         channel-id
-         :embed {:image {:url "https://cdn.discordapp.com/attachments/610695135738593282/710590989437501450/blazing.gif"}}))
-      (if (some? (-> content .toLowerCase (#(re-find #"twitch\.tv/|smash\.gg/" %))))
-        (let [channel-name (:name @(m/get-channel! (:messaging @state) channel-id))
-              mesg (format "%s linked to a twitch.tv stream in the message - %s - in %s"
-                           author content channel-name)]
-          (m/create-message!
-            (:messaging @state)
-            406853584202760192
-            :content mesg)))
+      ; (if (.contains (.toLowerCase content) "eddie")
+      ;     (m/create-message!
+      ;      (:messaging @state)
+      ;      channel-id
+      ;      :embed {:image {:url "https://cdn.discordapp.com/attachments/173094635391025152/691489861739216906/691114417013915740.png"}}))
+      ; (if (.contains (.toLowerCase content) "bullshit")
+      ;   (m/create-message!
+      ;    (:messaging @state)
+      ;    channel-id
+      ;    :embed {:image {:url "https://cdn.discordapp.com/attachments/610695135738593282/710590989437501450/blazing.gif"}}))
+      ; (if (some? (-> content .toLowerCase (#(re-find #"twitch\.tv/|smash\.gg/" %))))
+      ;   (let [channel-name (:name @(m/get-channel! (:messaging @state) channel-id))
+      ;         mesg (format "%s linked to a twitch.tv stream in the message - %s - in %s"
+      ;                      author content channel-name)]
+      ;     (m/create-message!
+      ;       (:messaging @state)
+      ;       406853584202760192
+      ;       :content mesg)))
       ;;;
       (if (.startsWith content ".")
         (let [sp (.split (.substring content 1) " ")
