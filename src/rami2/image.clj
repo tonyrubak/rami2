@@ -5,9 +5,8 @@
             [rami2.command :as command]))
 
 (defn format-query [query]
-  (let [formatted-query (client/url-encode-illegal-characters
-                         (str/join "+" query))]
-    formatted-query))
+  (client/url-encode-illegal-characters
+   (str/join "+" query)))
 
 (defn format-request [query api-key]
   {:headers {"Ocp-Apim-Subscription-Key" api-key}
