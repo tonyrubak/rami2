@@ -6,7 +6,8 @@
 
 (defn format-query [query]
   (client/url-encode-illegal-characters
-   (str/join "+" query)))
+   (str/join "+"
+             (str/split query #" "))))
 
 (defn format-request [query api-key]
   {:headers {"Ocp-Apim-Subscription-Key" api-key}

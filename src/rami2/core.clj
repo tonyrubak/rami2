@@ -34,10 +34,11 @@
     (when-not bot
       ;;; REACTS NEED TO GO INTO THEIR OWN MODULE
       ; (if (.contains (.toLowerCase content) "eddie")
-      ;     (m/create-message!
-      ;      (:messaging @state)
-      ;      channel-id
-      ;      :embed {:image {:url "https://cdn.discordapp.com/attachments/173094635391025152/691489861739216906/691114417013915740.png"}}))
+      ;   (m/create-reaction!
+      ;    (:messaging @state)
+      ;    channel-id
+      ;    id
+      ;    "69256233807891662"))
       ; (if (.contains (.toLowerCase content) "bullshit")
       ;   (m/create-message!
       ;    (:messaging @state)
