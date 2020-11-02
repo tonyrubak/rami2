@@ -14,6 +14,7 @@
             [rami2.search :as search]
             [rami2.storage :as storage]
             [rami2.weather :as wx]
+            [rami2.youtube :as youtube]
             [rami2.translate :as translate]))
 
 (def state (atom nil))
