@@ -29,7 +29,8 @@
 (defn transform-response [response]
   (let [vid (videos response)]
     (-> vid
-        (nth (rand-int (count vid)))
+        ; (nth (rand-int (count vid)))
+        first
         (get "id")
         (get "videoId")
         ((fn [id] (str "https://www.youtube.com/watch?v=" id))))))
