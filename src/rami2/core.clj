@@ -28,48 +28,51 @@
   [event-type event-data])
 
 (defmethod handle-event :message-create
-  [event-type {{bot :bot} :author
-              {author :username} :author
-              :keys [guild-id id channel-id content]}]
-  (if (and (= content "!disconnect") (contains? (:admin @state) author))
-    (a/put! (:connection @state) [:disconnect])
-    (when-not bot
-      ;;; REACTS NEED TO GO INTO THEIR OWN MODULE
-      ; (if (.contains (.toLowerCase content) "eddie")
-      ;   (m/create-reaction!
-      ;    (:messaging @state)
-      ;    channel-id
-      ;    id
-      ;    "69256233807891662"))
-      ; (if (.contains (.toLowerCase content) "bullshit")
-      ;   (m/create-message!
-      ;    (:messaging @state)
-      ;    channel-id
-      ;    :embed {:image {:url "https://cdn.discordapp.com/attachments/610695135738593282/710590989437501450/blazing.gif"}}))
-      ; (if (some? (-> content .toLowerCase (#(re-find #"twitch\.tv/|smash\.gg/" %))))
-      ;   (let [channel-name (:name @(m/get-channel! (:messaging @state) channel-id))
-      ;         mesg (format "%s linked to a twitch.tv stream in the message - %s - in %s"
-      ;                      author content channel-name)]
-      ;     (m/create-message!
-      ;       (:messaging @state)
-      ;       406853584202760192
-      ;       :content mesg)))
-      ;;;
-      (if (.startsWith content ".")
-        (let [sp (.split (.substring content 1) " ")
-              comm (first sp)
-              args (rest sp)]
-          (if-let [resp (command/invoke-command
-                      {:command comm
-                      :args args
-                      :author author}
-                      state)]
-            (m/create-message!
-             (:messaging @state)
-             channel-id
-             (:type resp)
-             (:value resp))))
-        (logging/log-raw (:logger @state) content)))))
+  [event-type message]
+  (let [content (:content message)
+        author (:username (:author message))
+        bot (:bot (:author message))
+        channel-id (:channel-id message)]
+    (if (and (= content "!disconnect")
+             (contains? (:admin @state) author))
+      (a/put! (:connection @state) [:disconnect])
+      (when-not bot
+            ;;; REACTS NEED TO GO INTO THEIR OWN MODULE
+            ; (if (.contains (.toLowerCase content) "eddie")
+            ;   (m/create-reaction!
+            ;    (:messaging @state)
+            ;    channel-id
+            ;    id
+            ;    "69256233807891662"))
+            ; (if (.contains (.toLowerCase content) "bullshit")
+            ;   (m/create-message!
+            ;    (:messaging @state)
+            ;    channel-id
+            ;    :embed {:image {:url "https://cdn.discordapp.com/attachments/610695135738593282/710590989437501450/blazing.gif"}}))
+            ;;;
+        (if (some? (-> content .toLowerCase (#(re-find #"twitch\.tv/|smash\.gg/" %))))
+              (let [channel-name (:name @(m/get-channel! (:messaging @state) channel-id))
+                    mesg (format "%s linked to a twitch.tv stream in the message - %s - in %s"
+                                 author content channel-name)]
+                (m/create-message!
+                  (:messaging @state)
+                  406853584202760192
+                  :content mesg)))
+        (if (.startsWith content ".")
+          (let [sp (.split (.substring content 1) " ")
+                comm (first sp)
+                args (rest sp)]
+            (if-let [resp (command/invoke-command
+                           {:command comm
+                            :args args
+                            :message message}
+                           state)]
+              (m/create-message!
+               (:messaging @state)
+               channel-id
+               (:type resp)
+               (:value resp))))
+          (logging/log-raw (:logger @state) content))))))
 
 (defn -main
   "I don't do a whole lot ... yet."

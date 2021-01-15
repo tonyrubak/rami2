@@ -24,16 +24,18 @@
       (get "value")))
 
 (defn transform-response [response]
-  (let [img (images response)]
+  (if-let [img (images response)]
     (-> img
         first
-        (get "contentUrl"))))
+        (get "contentUrl"))
+    nil))
 
 (defmethod command/invoke-command "image" [cmd state]
   (let [api-key (:azure (:apikeys @state))
-        query (format-query (:args cmd))
-        img-url (transform-response
-                 (query-azure
-                  (format-request query api-key)))]
-    {:type :embed
-     :value {:image {:url img-url}}}))
+        query (format-query (:args cmd))]
+    (if-let [img-url (transform-response
+                      (query-azure
+                       (format-request query api-key)))]
+      {:type :embed
+       :value {:image {:url img-url}}}
+      nil)))
