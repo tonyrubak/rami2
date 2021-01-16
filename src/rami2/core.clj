@@ -38,18 +38,12 @@
       (a/put! (:connection @state) [:disconnect])
       (when-not bot
             ;;; REACTS NEED TO GO INTO THEIR OWN MODULE
-            ; (if (.contains (.toLowerCase content) "eddie")
-            ;   (m/create-reaction!
-            ;    (:messaging @state)
-            ;    channel-id
-            ;    id
-            ;    "69256233807891662"))
-            ; (if (.contains (.toLowerCase content) "bullshit")
-            ;   (m/create-message!
-            ;    (:messaging @state)
-            ;    channel-id
-            ;    :embed {:image {:url "https://cdn.discordapp.com/attachments/610695135738593282/710590989437501450/blazing.gif"}}))
-            ;;;
+        (if (.contains (.toLowerCase content) "eddie")
+          (println @(m/create-reaction!
+                     (:messaging @state)
+                     channel-id
+                     (:id message)
+                     ":eddie:692562338078916629")))
         (if (some? (-> content .toLowerCase (#(re-find #"twitch\.tv/|smash\.gg/" %))))
               (let [channel-name (:name @(m/get-channel! (:messaging @state) channel-id))
                     mesg (format "%s linked to a twitch.tv stream in the message - %s - in %s"
@@ -80,7 +74,7 @@
   (let [config (with-open [r (java.io.PushbackReader. (clojure.java.io/reader "config.edn"))]
                  (clojure.edn/read r))
         event-ch (a/chan 100)
-        connection-ch (c/connect-bot! (:token config) event-ch :intents #{:guilds :guild-messages :direct-messages})
+        connection-ch (c/connect-bot! (:token config) event-ch :intents #{:guilds :guild-emojis :guild-messages :direct-messages :guild-message-reactions})
         messaging-ch (m/start-connection! (:token config))
         init-state {:connection connection-ch
                     :event event-ch
