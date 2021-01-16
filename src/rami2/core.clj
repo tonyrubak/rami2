@@ -80,7 +80,7 @@
   (let [config (with-open [r (java.io.PushbackReader. (clojure.java.io/reader "config.edn"))]
                  (clojure.edn/read r))
         event-ch (a/chan 100)
-        connection-ch (c/connect-bot! (:token config) event-ch)
+        connection-ch (c/connect-bot! (:token config) event-ch :intents #{:guilds :guild-messages :direct-messages})
         messaging-ch (m/start-connection! (:token config))
         init-state {:connection connection-ch
                     :event event-ch
