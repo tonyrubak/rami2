@@ -10,13 +10,12 @@
   :value (str/join " " (:args command))})
 
 (defmethod invoke-command "delete" [command state]
-  (let [message (:message command)
-        author (:username (:author message))]
+  (let [message (:message command)]
     (if-let [target (:message-reference message)]
       (let [target-message @(m/get-channel-message!
-                              (:messaging @state)
-                              (:channel-id target)
-                              (:message-id target))]
+                             (:messaging @state)
+                             (:channel-id target)
+                             (:message-id target))]
         (if (= "Ramiel" (:username (:author target-message)))
           (m/delete-message!
            (:messaging @state)
