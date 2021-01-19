@@ -12,10 +12,14 @@
 (defmethod invoke-command "delete" [command state]
   (let [message (:message command)
         author (:username (:author message))]
-    (if (contains? (:admin @state) author)
-      (if-let [target (:message-reference message)]
-        (m/delete-message!
-         (:messaging @state)
-         (:channel-id target)
-         (:message-id target))))
-    nil))
+    (if-let [target (:message-reference message)]
+      (let [target-message @(m/get-channel-message!
+                              (:messaging @state)
+                              (:channel-id target)
+                              (:message-id target))]
+        (if (= "Ramiel" (:username (:author target-message)))
+          (m/delete-message!
+           (:messaging @state)
+           (:channel-id target)
+           (:message-id target)))))
+  nil))
