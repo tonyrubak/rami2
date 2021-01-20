@@ -27,6 +27,19 @@
 (defmethod handle-event :default
   [event-type event-data])
 
+(defmethod handle-event :message-reaction-add
+  [event-type message]
+  (if (= "475057231444967434" (:id (:emoji message)))
+    (let [target-message @(m/get-channel-message!
+                           (:messaging @state)
+                           (:channel-id message)
+                           (:message-id message))]
+      (if (= "Ramiel" (:username (:author target-message)))
+        (m/delete-message!
+         (:messaging @state)
+         (:channel-id message)
+         (:message-id message))))))
+
 (defmethod handle-event :message-create
   [event-type message]
   (let [content (:content message)
