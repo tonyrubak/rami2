@@ -51,12 +51,12 @@
       (a/put! (:connection @state) [:disconnect])
       (when-not bot
             ;;; REACTS NEED TO GO INTO THEIR OWN MODULE
-        (if (.contains (.toLowerCase content) "eddie")
-          (println @(m/create-reaction!
-                     (:messaging @state)
-                     channel-id
-                     (:id message)
-                     ":eddie:692562338078916629")))
+        (if (some? (-> content .toLowerCase (#(re-find #"eddie" %))))
+          (m/create-reaction!
+           (:messaging @state)
+           channel-id
+           (:id message)
+           ":eddie:692562338078916629"))
         (if (some? (-> content .toLowerCase (#(re-find #"twitch\.tv/|smash\.gg/" %))))
               (let [channel-name (:name @(m/get-channel! (:messaging @state) channel-id))
                     mesg (format "%s linked to a twitch.tv stream in the message - %s - in %s"
