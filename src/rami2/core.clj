@@ -94,7 +94,8 @@
                     :messaging messaging-ch
                     :apikeys (:apikeys config)
                     :logger (logging/create-rotating-logger (:logfile config))
-                    :admin (:admin config)}]
+                    :admin (:admin config)}
+                    :features (:features config)]
     (reset! state init-state)
     (e/message-pump! event-ch handle-event)
     (m/stop-connection! messaging-ch)
