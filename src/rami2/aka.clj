@@ -10,7 +10,7 @@
             "Failed to add AKA. Maybe it already exists?")})
 
 (defmethod command/invoke-command "delaka" [command message state]
-  (let [author (:username (:author message)]
+  (let [author (:username (:author message))]
     {:type :content
       :value (if (contains? (:admin @state) author)
               (if (storage/delete-aka (:args command) state)

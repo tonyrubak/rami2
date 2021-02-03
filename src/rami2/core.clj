@@ -11,6 +11,7 @@
             [rami2.command :as command]
             [rami2.image :as image]
             [rami2.markov :as markov]
+            [rami2.reacts :as reacts]
             [rami2.search :as search]
             [rami2.storage :as storage]
             [rami2.uwu :as uwu]
@@ -45,26 +46,14 @@
   (let [content (:content message)
         author (:username (:author message))
         bot (:bot (:author message))
-        channel-id (:channel-id message)]
+        channel-id (:channel-id message)
+        reactions [{:kind :emoji :trigger #"eddie" :emoji-id ":eddie:692562338078916629"}
+                   {:kind :repost :trigger #"twitch\.tv/|smash\.gg/" :target-channel 406853584202760192}]]
     (if (and (= content "!disconnect")
              (contains? (:admin @state) author))
       (a/put! (:connection @state) [:disconnect])
       (when-not bot
-            ;;; REACTS NEED TO GO INTO THEIR OWN MODULE
-        (if (some? (-> content .toLowerCase (#(re-find #"eddie" %))))
-          (m/create-reaction!
-           (:messaging @state)
-           channel-id
-           (:id message)
-           ":eddie:692562338078916629"))
-        (if (some? (-> content .toLowerCase (#(re-find #"twitch\.tv/|smash\.gg/" %))))
-              (let [channel-name (:name @(m/get-channel! (:messaging @state) channel-id))
-                    mesg (format "%s linked to a twitch.tv stream in the message - %s - in %s"
-                                 author content channel-name)]
-                (m/create-message!
-                  (:messaging @state)
-                  406853584202760192
-                  :content mesg)))
+        (doall (map (fn [x] (reacts/message-react x message state)) reactions))
         (if (.startsWith content ".")
           (let [sp (.split (.substring content 1) " ")
                 comm (first sp)
