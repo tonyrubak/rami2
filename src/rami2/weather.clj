@@ -28,7 +28,7 @@
       "https://api.openweathermap.org/data/2.5/weather"
       (format-request (:axios (:apikeys @state)) location)))))
 
-(defmethod command/invoke-command "w" [cmd state]
+(defmethod command/invoke-command "w" [cmd message state]
   (let [query (str/join " " (:args cmd))]
     {:type :embed
      :value (format-response (query-openweather query state))}))

@@ -14,7 +14,7 @@
       (str/replace #"ove" "uv")
       (str/replace #"!+" (rand-nth faces))))
 
-(defmethod command/invoke-command "uwu" [command state]
+(defmethod command/invoke-command "uwu" [command message state]
   (let [uwu (uwuify (str/join " " (:args command)))]
     {:type :content
      :value uwu}))

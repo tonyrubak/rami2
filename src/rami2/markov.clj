@@ -22,7 +22,7 @@
     (aws/client {:api :lambda})
     (format-request prefix)))
 
-(defmethod command/invoke-command "markov" [cmd state]
+(defmethod command/invoke-command "markov" [cmd message state]
   (let [prefix (first (:args cmd))
         response (if (= prefix "communism")
                    "communism begins"

@@ -25,7 +25,7 @@
     "https://api.cognitive.microsofttranslator.com/translate"
     query))
 
-(defmethod command/invoke-command "translate" [cmd state]
+(defmethod command/invoke-command "translate" [cmd message state]
   (let [api-key (:translate (:apikeys @state))
         target (first (:args cmd))
         query (str/join " " (rest (:args cmd)))

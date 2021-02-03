@@ -20,7 +20,7 @@
         first
         (#(select-keys % ["url" "snippet"])))))
 
-(defmethod command/invoke-command "bing" [cmd state]
+(defmethod command/invoke-command "bing" [cmd message state]
   {:type :embed
     :value (let [resp (get-search-response (:args cmd) state)]
             {:title (format "Bing results for %s" (str/join " " (:args cmd)))

@@ -3,14 +3,14 @@
             [rami2.storage :as storage]
             [clojure.string :as str]))
 
-(defmethod command/invoke-command "aka" [command state]
+(defmethod command/invoke-command "aka" [command message state]
   {:type :content
     :value (if (storage/set-aka (:args command) state)
             (format "AKA `%s` added successfully." (first (:args command)))
             "Failed to add AKA. Maybe it already exists?")})
 
-(defmethod command/invoke-command "delaka" [command state]
-  (let [author (:username (:author (:message command)))]
+(defmethod command/invoke-command "delaka" [command message state]
+  (let [author (:username (:author message)]
     {:type :content
       :value (if (contains? (:admin @state) author)
               (if (storage/delete-aka (:args command) state)
@@ -18,7 +18,7 @@
                 "Failed to remove AKA. Maybe it doesn't exist?")
               "Not authorized.")}))
 
-(defmethod command/invoke-command "list" [command state]
+(defmethod command/invoke-command "list" [command message state]
   (let [keys (map #(-> % :tag :S)
                   (:Items (storage/list-aka state)))]
     {:type :content
@@ -27,7 +27,7 @@
                               (filter #(.contains % search) keys)
                               keys)))}))
 
-(defmethod command/invoke-command :default [command state]
+(defmethod command/invoke-command :default [command message state]
   {:type :content
    :value (if-let [response (storage/get-aka (:command command) state)]
             response

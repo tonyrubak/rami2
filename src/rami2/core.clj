@@ -70,9 +70,9 @@
                 comm (first sp)
                 args (rest sp)]
             (if-let [resp (command/invoke-command
-                           {:command comm
-                            :args args
-                            :message message}
+                           { :command comm
+                            :args args }
+                           message
                            state)]
               (m/create-message!
                (:messaging @state)
@@ -94,8 +94,8 @@
                     :messaging messaging-ch
                     :apikeys (:apikeys config)
                     :logger (logging/create-rotating-logger (:logfile config))
-                    :admin (:admin config)}
-                    :features (:features config)]
+                    :admin (:admin config)
+                    :features (:features config)}]
     (reset! state init-state)
     (e/message-pump! event-ch handle-event)
     (m/stop-connection! messaging-ch)

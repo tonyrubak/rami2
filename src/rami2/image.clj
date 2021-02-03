@@ -30,7 +30,7 @@
         (get "contentUrl"))
     nil))
 
-(defmethod command/invoke-command "image" [cmd state]
+(defmethod command/invoke-command "image" [cmd message state]
   (let [api-key (:azure (:apikeys @state))
         query (format-query (:args cmd))]
     (if-let [img-url (transform-response
