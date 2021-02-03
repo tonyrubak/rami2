@@ -12,7 +12,7 @@
      (:id message)
      (:emoji-id reaction))))
 
-(defmethod reacts/message-react :repost [reaction message state]
+(defmethod message-react :repost [reaction message state]
   (if (some? (-> (:content message) .toLowerCase (#(re-find (:trigger reaction) %))))
     (let [mesg (format "%s: %s" (:username (:author message)) (:content message))]
       (m/create-message!
