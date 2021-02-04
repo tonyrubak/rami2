@@ -16,4 +16,4 @@
 (defmethod invoke-command "listemoji" [command message state]
   (println @(m/list-guild-emojis!
               (:messaging @state)
-              "222454667773345792")))
+              (first (:args command)))))
