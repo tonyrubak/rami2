@@ -9,7 +9,7 @@
   {:type :content
    :value (str/join " " (:args command))})
 
-(defmethod invoke-command "snowflake" [command message state]
+(defmethod invoke-command "guild-snowflake" [command message state]
   {:type :content
    :value (:guild-id message)})
 
