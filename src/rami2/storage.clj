@@ -8,7 +8,7 @@
     (let [dynamo (aws/client {:api :dynamodb})
           resp (aws/invoke dynamo
                           {:op :GetItem
-                           :request {:TableName "rami2" 
+                           :request {:TableName (:table (:storage @state))
                                      :Key {"tag" {:S aka}}}})]
       (if-not (empty? resp)
         (-> resp :Item :value :S)
@@ -24,7 +24,7 @@
               {:op :PutItem
                :request
                 {:ConditionExpression "attribute_not_exists(tag)"
-                 :TableName "rami2" 
+                 :TableName (:table (:storage @state))
                  :Item {"tag"   {:S command}
                         "value" {:S value}}}})]
     (not= (:cognitect.anomalies/category resp) :cognitect.anomalies/incorrect)))
@@ -34,7 +34,7 @@
   (aws/invoke (aws/client {:api :dynamodb})
               {:op :Scan
               :request
-               {:TableName "rami2"
+               {:TableName (:table (:storage @state))
                :ProjectionExpression "tag"}}))
 
 (defn delete-aka
@@ -43,7 +43,7 @@
           command (first aka)
           resp (aws/invoke dynamo
                           {:op :DeleteItem
-                            :request {:TableName "rami2" 
+                            :request {:TableName (:table (:storage @state))
                                       :Key {"tag" {:S command}}}})]
       (not= (:cognitect.anomalies/category resp)
             :cognitect.anomalies/incorrect)))
