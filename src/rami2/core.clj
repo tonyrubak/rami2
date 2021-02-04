@@ -46,14 +46,12 @@
   (let [content (:content message)
         author (:username (:author message))
         bot (:bot (:author message))
-        channel-id (:channel-id message)
-        reactions [{:kind :emoji :trigger #"eddie" :emoji-id ":eddie:692562338078916629"}
-                   {:kind :repost :trigger #"twitch\.tv/|smash\.gg/" :target-channel 406853584202760192}]]
+        channel-id (:channel-id message)]
     (if (and (= content "!disconnect")
              (contains? (:admin (:config @state)) author))
       (a/put! (:connection @state) [:disconnect])
       (when-not bot
-        (doall (map (fn [x] (reacts/message-react x message state)) reactions))
+        (doall (map (fn [x] (reacts/message-react x message state)) (:reactions (:config @state))))
         (if (.startsWith content ".")
           (let [sp (.split (.substring content 1) " ")
                 comm (first sp)
