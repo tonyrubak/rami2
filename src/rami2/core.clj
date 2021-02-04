@@ -50,7 +50,7 @@
         reactions [{:kind :emoji :trigger #"eddie" :emoji-id ":eddie:692562338078916629"}
                    {:kind :repost :trigger #"twitch\.tv/|smash\.gg/" :target-channel 406853584202760192}]]
     (if (and (= content "!disconnect")
-             (contains? (:admin @state) author))
+             (contains? (:admin (:config @state)) author))
       (a/put! (:connection @state) [:disconnect])
       (when-not bot
         (doall (map (fn [x] (reacts/message-react x message state)) reactions))
@@ -81,10 +81,9 @@
         init-state {:connection connection-ch
                     :event event-ch
                     :messaging messaging-ch
-                    :apikeys (:apikeys config)
                     :logger (logging/create-rotating-logger (:logfile config))
-                    :admin (:admin config)
-                    :features (:features config)}]
+                    :apikeys (:apikeys config)
+                    :config config}]
     (reset! state init-state)
     (e/message-pump! event-ch handle-event)
     (m/stop-connection! messaging-ch)

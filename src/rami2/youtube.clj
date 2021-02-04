@@ -36,7 +36,7 @@
         ((fn [id] (str "https://www.youtube.com/watch?v=" id))))))
 
 (defmethod command/invoke-command "yt" [cmd message state]
-  (let [api-key (:youtube (:apikeys @state))
+  (let [api-key (:youtube (:apikeys (:config @state)))
         query (format-query (:args cmd))
         vid-url (transform-response
                  (query-youtube

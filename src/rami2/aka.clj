@@ -12,7 +12,7 @@
 (defmethod command/invoke-command "delaka" [command message state]
   (let [author (:username (:author message))]
     {:type :content
-      :value (if (contains? (:admin @state) author)
+      :value (if (contains? (:admin (:config @state)) author)
               (if (storage/delete-aka (:args command) state)
                 "AKA deleted successfully."
                 "Failed to remove AKA. Maybe it doesn't exist?")

@@ -26,7 +26,7 @@
     (:body
      (client/get
       "https://api.openweathermap.org/data/2.5/weather"
-      (format-request (:axios (:apikeys @state)) location)))))
+      (format-request (:axios (:apikeys (:config @state))) location)))))
 
 (defmethod command/invoke-command "w" [cmd message state]
   (let [query (str/join " " (:args cmd))]

@@ -26,7 +26,7 @@
     query))
 
 (defmethod command/invoke-command "translate" [cmd message state]
-  (let [api-key (:translate (:apikeys @state))
+  (let [api-key (:translate (:apikeys (:config @state)))
         target (first (:args cmd))
         query (str/join " " (rest (:args cmd)))
         translation (transform-response

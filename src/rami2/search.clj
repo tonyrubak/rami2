@@ -7,7 +7,7 @@
 (defn get-search-response [query state]
   (let [url "https://api.cognitive.microsoft.com/bing/v7.0/search"
         formatted-query (str/join "+" query)
-        api-key (:azure (:apikeys @state))
+        api-key (:azure (:apikeys (:config @state)))
         headers {"Ocp-Apim-Subscription-Key" api-key}
         params {"q" formatted-query
                 "textDecorations" false
