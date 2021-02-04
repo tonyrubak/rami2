@@ -80,7 +80,6 @@
                     :event event-ch
                     :messaging messaging-ch
                     :logger (logging/create-rotating-logger (:logfile config))
-                    :apikeys (:apikeys config)
                     :config config}]
     (reset! state init-state)
     (e/message-pump! event-ch handle-event)
