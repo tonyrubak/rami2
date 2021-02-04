@@ -13,6 +13,15 @@
   {:type :content
    :value (:guild-id message)})
 
+(defmethod invoke-command "user-snowflake" [command message state]
+  {:type :content
+   :value (if-let [target (:message-reference message)]
+            (:id (:author @(m/get-channel-message!
+                            (:messaging @state)
+                            (:channel-id message)
+                            (:message-id target))))
+            (:id (:author message)))})
+
 (defmethod invoke-command "listemoji" [command message state]
   (println @(m/list-guild-emojis!
               (:messaging @state)
