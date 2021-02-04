@@ -35,7 +35,7 @@
                            (:messaging @state)
                            (:channel-id message)
                            (:message-id message))]
-      (if (= "Ramiel" (:username (:author target-message)))
+      (if (:bot (:author target-message))
         (m/delete-message!
          (:messaging @state)
          (:channel-id message)
