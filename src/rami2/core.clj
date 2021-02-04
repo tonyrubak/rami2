@@ -44,7 +44,7 @@
 (defmethod handle-event :message-create
   [event-type message]
   (let [content (:content message)
-        author (:username (:author message))
+        author (:id (:author message))
         bot (:bot (:author message))
         channel-id (:channel-id message)]
     (if (and (= content "!disconnect")
