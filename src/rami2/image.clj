@@ -31,7 +31,7 @@
     nil))
 
 (defmethod command/invoke-command "image" [cmd message state]
-  (let [api-key (:azure (:apikeys @state))
+  (let [api-key (:azure (:apikeys (:config @state)))
         query (format-query (:args cmd))]
     (if-let [img-url (transform-response
                       (query-azure
