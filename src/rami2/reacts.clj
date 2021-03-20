@@ -19,3 +19,13 @@
        (:messaging @state)
        (:target-channel reaction)
        :content mesg))))
+
+(defmethod message-react :message [reaction message state]
+  (if (some? (-> (:content message) .toLowerCase (#(re-find (re-pattern (:trigger reaction)) %))))
+    (m/create-message!
+      (:messaging @state)
+      (:channel-id message)
+      :content (:message reaction))))
+
+(defmethod message-react :default [reaction message state]
+  nil)
