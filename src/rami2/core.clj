@@ -6,6 +6,7 @@
             [clojure.core.async :as a]
             [clojure.data.json :as json]
             [clojure.string :as str]
+            [rami2.8ball :as eight-ball]
             [rami2.aka :as aka]
             [rami2.logging :as logging]
             [rami2.command :as command]
