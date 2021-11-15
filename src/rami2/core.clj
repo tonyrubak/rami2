@@ -14,6 +14,7 @@
             [rami2.markov :as markov]
             [rami2.reacts :as reacts]
             [rami2.search :as search]
+            [rami2.stock :as stock]
             [rami2.storage :as storage]
             [rami2.uwu :as uwu]
             [rami2.weather :as wx]
