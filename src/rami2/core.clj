@@ -8,6 +8,7 @@
             [clojure.string :as str]
             [rami2.8ball :as eight-ball]
             [rami2.aka :as aka]
+            [rami2.awstr :as awstr]
             [rami2.logging :as logging]
             [rami2.command :as command]
             [rami2.image :as image]
