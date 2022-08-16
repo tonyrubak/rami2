@@ -33,7 +33,7 @@
 
 (defmethod handle-event :message-reaction-add
   [event-type message]
-  (if (= (:control-emoji (:config @state)) (:id (:emoji message)))
+  (if (contains? (:control-emoji (:config @state)) (:id (:emoji message)))
     (let [target-message @(m/get-channel-message!
                            (:messaging @state)
                            (:channel-id message)
